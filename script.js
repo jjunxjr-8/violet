@@ -5,7 +5,7 @@ const DATA = {
     { name: "COSMOS RoboParts — VEX Robotics Order Service", url: "https://roboparts.nlcscosmos.com" },
     { name: "COSMOS Rankings — House Competitions Scoreboard", url: "https://houses.nlcscosmos.com" },
     { name: "COSMOS MediaCube — NLCS Publications", url: "https://mediacube.nlcscosmos.com" },
-    { name: "COSMOS OneClick — AI Powered Drive Search", url: "https://nlcscosmos.com/oneclick" },
+    { name: "COSMOS OneClick — AI Powered Drive Search", url: "oneclick.html" },
     { name: "COSMOS QuickScope — AI Powered Email Search", url: "https://nlcscosmos.com/quickscope" },
     { name: "COSMOS Larry — NLCS Library's AI Chatbot", url: "#" }
   ],
