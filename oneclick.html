@@ -10,10 +10,11 @@
   
   <style>
     :root {
-      --bg-dark: #0f0a18;
-      --accent-purple: #8e44ad;
-      --accent-light: #c88df2;
-      --text-color: #f4f4f6;
+      --bg-light: #ffffff;
+      --text-main: #1d1526;
+      --text-muted: #645673;
+      --accent-purple: #6f2bdb;
+      --card-border: #e2e2e7;
     }
 
     * {
@@ -23,8 +24,8 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      color: var(--text-color);
+      background-color: var(--bg-light);
+      color: var(--text-main);
       font-family: 'Google Sans', system-ui, -apple-system, sans-serif;
       overflow: hidden;
       height: 100vh;
@@ -46,9 +47,6 @@
       top: 24px;
       left: 24px;
       z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 16px;
     }
 
     .back-btn {
@@ -56,19 +54,19 @@
       align-items: center;
       gap: 8px;
       padding: 10px 18px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #f4f4f6;
+      border: 1px solid var(--card-border);
       border-radius: 24px;
-      color: #ffffff;
+      color: var(--text-main);
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
       transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .back-btn:hover {
-      background: rgba(255, 255, 255, 0.18);
+      background: #e8e8ed;
       transform: translateX(-2px);
     }
 
@@ -84,23 +82,20 @@
 
     .page-title h1 {
       font-size: 24px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      background: linear-gradient(135deg, #ffffff 0%, var(--accent-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      color: var(--accent-purple);
+      letter-spacing: -0.3px;
     }
 
     .page-title p {
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--text-muted);
       margin-top: 4px;
     }
   </style>
 
-  <!-- Three.js Library -->
+  <!-- Three.js & OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <!-- OrbitControls -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
@@ -116,7 +111,7 @@
 
   <div class="page-title">
     <h1>COSMOS OneClick</h1>
-    <p>3D Interactive Neural Network Sphere</p>
+    <p>3D Sphere of 2D Violet Circles</p>
   </div>
 
   <div id="canvas-container"></div>
@@ -126,18 +121,17 @@
     const container = document.getElementById('canvas-container');
 
     const scene = new THREE.Scene();
-    // Add subtle ambient fog for depth
-    scene.fog = new THREE.FogExp2(0x0f0a18, 0.035);
+    scene.background = new THREE.Color(0xffffff); // Pure white background
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 18;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Orbit Controls for interactivity
+    // Orbit Controls
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -145,89 +139,91 @@
     controls.enableZoom = true;
 
     // --- LIGHTING ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xa663cc, 2.5, 50);
-    pointLight1.position.set(15, 15, 15);
-    scene.add(pointLight1);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.7);
+    dirLight1.position.set(10, 15, 20);
+    scene.add(dirLight1);
 
-    const pointLight2 = new THREE.PointLight(0x6f2bdb, 3, 50);
-    pointLight2.position.set(-15, -15, -15);
-    scene.add(pointLight2);
+    const dirLight2 = new THREE.DirectionalLight(0xa663cc, 0.5);
+    dirLight2.position.set(-10, -15, -10);
+    scene.add(dirLight2);
 
-    // --- SPHERE OF SPHERES GENERATION ---
+    // --- SPHERE OF 2D CIRCLE DISCS GENERATION ---
     const mainGroup = new THREE.Group();
     scene.add(mainGroup);
 
-    const numSpheres = 450; // Number of smaller spheres
-    const mainRadius = 7.5; // Radius of the large outer sphere
-    const smallSphereRadius = 0.22; // Size of each small sphere
+    const numCircles = 650;      // Total 2D circles
+    const sphereRadius = 6.8;    // Sphere radius
+    const circleBaseRadius = 0.38; // Size of each 2D circle disc
 
-    // Shared geometry & material for high performance (Instanced Mesh)
-    const smallSphereGeo = new THREE.SphereGeometry(smallSphereRadius, 16, 16);
-    
-    // Purple / Violet shiny material
+    // 2D Flat Circle Geometry
+    const circleGeo = new THREE.CircleGeometry(circleBaseRadius, 32);
+
+    // Material rendering both sides of the flat discs
     const material = new THREE.MeshStandardMaterial({
-      color: 0x9b59b6,
-      roughness: 0.2,
-      metalness: 0.8,
-      emissive: 0x3d1259,
-      emissiveIntensity: 0.4
+      side: THREE.DoubleSide,
+      roughness: 0.3,
+      metalness: 0.1
     });
 
-    const instancedMesh = new THREE.InstancedMesh(smallSphereGeo, material, numSpheres);
+    const instancedMesh = new THREE.InstancedMesh(circleGeo, material, numCircles);
     const dummy = new THREE.Object3D();
-    const colors = [0x6f2bdb, 0xa663cc, 0x5821b3, 0x8e44ad, 0x3498db];
 
-    // Fibonacci Sphere Algorithm to evenly distribute small spheres on the outer surface
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle in radians
+    // Shades of Violet Palette
+    const violetPalette = [
+      '#2a1b40', // Midnight Violet
+      '#3d1259', // Deep Violet
+      '#5821b3', // Royal Purple
+      '#6f2bdb', // Primary Violet
+      '#8e44ad', // Vibrant Plum
+      '#a663cc', // Orchid Violet
+      '#c88df2', // Light Lavender
+      '#e2c2f9'  // Soft Pastel Violet
+    ];
 
-    for (let i = 0; i < numSpheres; i++) {
-      const y = 1 - (i / (numSpheres - 1)) * 2; // Ranging from 1 to -1
+    // Fibonacci Sphere Distribution
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+
+    for (let i = 0; i < numCircles; i++) {
+      const y = 1 - (i / (numCircles - 1)) * 2; 
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = phi * i;
 
-      const x = Math.cos(theta) * radiusAtY;
-      const z = Math.sin(theta) * radiusAtY;
+      // Add subtle radial variation for depth
+      const currentRadius = sphereRadius + (Math.random() * 0.4 - 0.2);
 
-      // Position scaled to the main sphere radius
-      dummy.position.set(x * mainRadius, y * mainRadius, z * mainRadius);
+      const x = Math.cos(theta) * radiusAtY * currentRadius;
+      const posY = y * currentRadius;
+      const z = Math.sin(theta) * radiusAtY * currentRadius;
 
-      // Random small scale variations for visual interest
-      const scale = 0.7 + Math.random() * 0.6;
+      dummy.position.set(x, posY, z);
+
+      // Orient flat 2D circles to face radially outward from center
+      dummy.lookAt(x * 2, posY * 2, z * 2);
+
+      // Random scale variations
+      const scale = 0.5 + Math.random() * 0.8;
       dummy.scale.set(scale, scale, scale);
 
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
 
-      // Apply subtle purple variations to individual spheres
-      const colorHex = colors[i % colors.length];
+      // Assign random shade of violet
+      const colorHex = violetPalette[Math.floor(Math.random() * violetPalette.length)];
       instancedMesh.setColorAt(i, new THREE.Color(colorHex));
     }
 
     mainGroup.add(instancedMesh);
 
-    // Inner Glowing Core Sphere
-    const coreGeo = new THREE.SphereGeometry(mainRadius * 0.7, 32, 32);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: 0x6f2bdb,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.15
-    });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    mainGroup.add(coreMesh);
-
     // --- ANIMATION LOOP ---
     function animate() {
       requestAnimationFrame(animate);
 
-      // Continuous 3D Rotation
-      mainGroup.rotation.y += 0.003;
-      mainGroup.rotation.x += 0.0015;
-
-      coreMesh.rotation.y -= 0.002;
+      // Continuous Smooth 3D Rotation
+      mainGroup.rotation.y += 0.0035;
+      mainGroup.rotation.x += 0.0018;
 
       controls.update();
       renderer.render(scene, camera);
