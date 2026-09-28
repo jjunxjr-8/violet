@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COSMOS OneClick — 3D Sphere</title>
+  <title>COSMOS OneClick — 3D Dot Sphere</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@
 
   <div class="page-title">
     <h1>COSMOS OneClick</h1>
-    <p>3D Sphere of 2D Violet Circles</p>
+    <p>3D Sphere of Violet Dots</p>
   </div>
 
   <div id="canvas-container"></div>
@@ -138,92 +138,88 @@
     controls.rotateSpeed = 0.8;
     controls.enableZoom = true;
 
-    // --- LIGHTING ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
-    scene.add(ambientLight);
+    // Helper function to create smooth round dot textures for point rendering
+    function createDotTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(32, 32, 28, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      return new THREE.CanvasTexture(canvas);
+    }
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.7);
-    dirLight1.position.set(10, 15, 20);
-    scene.add(dirLight1);
+    // --- SPHERE OF 1D DOTS (PARTICLES) GENERATION ---
+    const numDots = 2500;       // Total number of 1D dots
+    const sphereRadius = 6.8;   // Outer sphere radius
 
-    const dirLight2 = new THREE.DirectionalLight(0xa663cc, 0.5);
-    dirLight2.position.set(-10, -15, -10);
-    scene.add(dirLight2);
+    const positions = new Float32Array(numDots * 3);
+    const colors = new Float32Array(numDots * 3);
 
-    // --- SPHERE OF 2D CIRCLE DISCS GENERATION ---
-    const mainGroup = new THREE.Group();
-    scene.add(mainGroup);
-
-    const numCircles = 650;      // Total 2D circles
-    const sphereRadius = 6.8;    // Sphere radius
-    const circleBaseRadius = 0.38; // Size of each 2D circle disc
-
-    // 2D Flat Circle Geometry
-    const circleGeo = new THREE.CircleGeometry(circleBaseRadius, 32);
-
-    // Material rendering both sides of the flat discs
-    const material = new THREE.MeshStandardMaterial({
-      side: THREE.DoubleSide,
-      roughness: 0.3,
-      metalness: 0.1
-    });
-
-    const instancedMesh = new THREE.InstancedMesh(circleGeo, material, numCircles);
-    const dummy = new THREE.Object3D();
-
-    // Shades of Violet Palette
+    // Palette of Violet / Purple Shades
     const violetPalette = [
-      '#2a1b40', // Midnight Violet
-      '#3d1259', // Deep Violet
-      '#5821b3', // Royal Purple
-      '#6f2bdb', // Primary Violet
-      '#8e44ad', // Vibrant Plum
-      '#a663cc', // Orchid Violet
-      '#c88df2', // Light Lavender
-      '#e2c2f9'  // Soft Pastel Violet
+      new THREE.Color('#2a1b40'), // Midnight Violet
+      new THREE.Color('#3d1259'), // Deep Violet
+      new THREE.Color('#5821b3'), // Royal Purple
+      new THREE.Color('#6f2bdb'), // Primary Violet
+      new THREE.Color('#8e44ad'), // Vibrant Plum
+      new THREE.Color('#a663cc'), // Orchid Violet
+      new THREE.Color('#c88df2'), // Light Lavender
+      new THREE.Color('#e2c2f9')  // Soft Pastel Violet
     ];
 
-    // Fibonacci Sphere Distribution
+    // Fibonacci Sphere Distribution algorithm
     const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
 
-    for (let i = 0; i < numCircles; i++) {
-      const y = 1 - (i / (numCircles - 1)) * 2; 
+    for (let i = 0; i < numDots; i++) {
+      const y = 1 - (i / (numDots - 1)) * 2; 
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = phi * i;
 
-      // Add subtle radial variation for depth
-      const currentRadius = sphereRadius + (Math.random() * 0.4 - 0.2);
+      // Slight radial variation for natural depth
+      const currentRadius = sphereRadius + (Math.random() * 0.3 - 0.15);
 
       const x = Math.cos(theta) * radiusAtY * currentRadius;
       const posY = y * currentRadius;
       const z = Math.sin(theta) * radiusAtY * currentRadius;
 
-      dummy.position.set(x, posY, z);
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = posY;
+      positions[i * 3 + 2] = z;
 
-      // Orient flat 2D circles to face radially outward from center
-      dummy.lookAt(x * 2, posY * 2, z * 2);
-
-      // Random scale variations
-      const scale = 0.5 + Math.random() * 0.8;
-      dummy.scale.set(scale, scale, scale);
-
-      dummy.updateMatrix();
-      instancedMesh.setMatrixAt(i, dummy.matrix);
-
-      // Assign random shade of violet
-      const colorHex = violetPalette[Math.floor(Math.random() * violetPalette.length)];
-      instancedMesh.setColorAt(i, new THREE.Color(colorHex));
+      // Pick a random shade of violet
+      const color = violetPalette[Math.floor(Math.random() * violetPalette.length)];
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
     }
 
-    mainGroup.add(instancedMesh);
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    // Points Material with smooth dot texture
+    const pointMaterial = new THREE.PointsMaterial({
+      size: 0.3,
+      map: createDotTexture(),
+      vertexColors: true,
+      transparent: true,
+      alphaTest: 0.1,
+      sizeAttenuation: true
+    });
+
+    const pointCloud = new THREE.Points(geometry, pointMaterial);
+    scene.add(pointCloud);
 
     // --- ANIMATION LOOP ---
     function animate() {
       requestAnimationFrame(animate);
 
-      // Continuous Smooth 3D Rotation
-      mainGroup.rotation.y += 0.0035;
-      mainGroup.rotation.x += 0.0018;
+      // Continuous 3D rotation
+      pointCloud.rotation.y += 0.003;
+      pointCloud.rotation.x += 0.0015;
 
       controls.update();
       renderer.render(scene, camera);
