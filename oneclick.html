@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COSMOS OneClick — 3D Dot Sphere</title>
+  <title>COSMOS OneClick — Geometric 3D Dot Sphere</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@
 
   <div class="page-title">
     <h1>COSMOS OneClick</h1>
-    <p>3D Sphere of Violet Dots</p>
+    <p>Geometric 3D Sphere of Violet Dots</p>
   </div>
 
   <div id="canvas-container"></div>
@@ -138,7 +138,7 @@
     controls.rotateSpeed = 0.8;
     controls.enableZoom = true;
 
-    // Helper function to create smooth round dot textures for point rendering
+    // Helper function to create smooth round dot textures
     function createDotTexture() {
       const canvas = document.createElement('canvas');
       canvas.width = 64;
@@ -151,12 +151,10 @@
       return new THREE.CanvasTexture(canvas);
     }
 
-    // --- SPHERE OF 1D DOTS (PARTICLES) GENERATION ---
-    const numDots = 2500;       // Total number of 1D dots
-    const sphereRadius = 6.8;   // Outer sphere radius
-
-    const positions = new Float32Array(numDots * 3);
-    const colors = new Float32Array(numDots * 3);
+    // --- GEOMETRIC PATTERN GENERATION ---
+    const sphereRadius = 6.8;
+    const posArray = [];
+    const colorArray = [];
 
     // Palette of Violet / Purple Shades
     const violetPalette = [
@@ -170,39 +168,114 @@
       new THREE.Color('#e2c2f9')  // Soft Pastel Violet
     ];
 
-    // Fibonacci Sphere Distribution algorithm
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    // 1. GEODESIC ICOSAHEDRON LATTICE
+    // Interpolate points along the edges of a subdivided icosahedron
+    const icoGeo = new THREE.IcosahedronGeometry(sphereRadius, 3);
+    const icoPos = icoGeo.attributes.position;
+    const icoIndex = icoGeo.index;
+    const edgeMap = new Set();
 
-    for (let i = 0; i < numDots; i++) {
-      const y = 1 - (i / (numDots - 1)) * 2; 
-      const radiusAtY = Math.sqrt(1 - y * y);
-      const theta = phi * i;
+    function addEdgePoints(v1, v2, samplesPerEdge = 4) {
+      const key1 = `${v1.x.toFixed(3)},${v1.y.toFixed(3)},${v1.z.toFixed(3)}`;
+      const key2 = `${v2.x.toFixed(3)},${v2.y.toFixed(3)},${v2.z.toFixed(3)}`;
+      const edgeKey = key1 < key2 ? `${key1}_${key2}` : `${key2}_${key1}`;
 
-      // Slight radial variation for natural depth
-      const currentRadius = sphereRadius + (Math.random() * 0.3 - 0.15);
+      if (edgeMap.has(edgeKey)) return;
+      edgeMap.add(edgeKey);
 
-      const x = Math.cos(theta) * radiusAtY * currentRadius;
-      const posY = y * currentRadius;
-      const z = Math.sin(theta) * radiusAtY * currentRadius;
+      for (let s = 0; s <= samplesPerEdge; s++) {
+        const t = s / samplesPerEdge;
+        const p = new THREE.Vector3().lerpVectors(v1, v2, t).normalize().multiplyScalar(sphereRadius);
+        
+        posArray.push(p.x, p.y, p.z);
 
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = posY;
-      positions[i * 3 + 2] = z;
-
-      // Pick a random shade of violet
-      const color = violetPalette[Math.floor(Math.random() * violetPalette.length)];
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
+        // Color mapped strictly to latitude height for structured gradients
+        const normY = (p.y / sphereRadius + 1) / 2;
+        const paletteIdx = Math.floor(normY * (violetPalette.length - 1));
+        const c = violetPalette[paletteIdx];
+        colorArray.push(c.r, c.g, c.b);
+      }
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    if (icoIndex) {
+      for (let i = 0; i < icoIndex.count; i += 3) {
+        const a = new THREE.Vector3().fromBufferAttribute(icoPos, icoIndex.getX(i));
+        const b = new THREE.Vector3().fromBufferAttribute(icoPos, icoIndex.getX(i + 1));
+        const c = new THREE.Vector3().fromBufferAttribute(icoPos, icoIndex.getX(i + 2));
+        addEdgePoints(a, b, 3);
+        addEdgePoints(b, c, 3);
+        addEdgePoints(c, a, 3);
+      }
+    }
 
-    // Points Material with smooth dot texture
+    // 2. INTERSECTING GREAT CIRCLE RINGS (ARMILLARY MATRIX)
+    const numRings = 8;
+    const dotsPerRing = 120;
+    for (let r = 0; r < numRings; r++) {
+      const ringAngle = (r / numRings) * Math.PI;
+      const ringRadius = sphereRadius * 1.02; // Offset slightly for layered depth
+
+      for (let p = 0; p < dotsPerRing; p++) {
+        const theta = (p / dotsPerRing) * Math.PI * 2;
+        
+        const x = Math.cos(theta) * ringRadius;
+        const y = Math.sin(theta) * ringRadius;
+        const z = 0;
+
+        // Apply 60-degree tilt and axial rotation
+        const tilt = Math.PI / 3;
+        const yTilted = y * Math.cos(tilt) - z * Math.sin(tilt);
+        const zTilted = y * Math.sin(tilt) + z * Math.cos(tilt);
+
+        const xFinal = x * Math.cos(ringAngle) + zTilted * Math.sin(ringAngle);
+        const yFinal = yTilted;
+        const zFinal = -x * Math.sin(ringAngle) + zTilted * Math.cos(ringAngle);
+
+        posArray.push(xFinal, yFinal, zFinal);
+
+        // Highlight ring dots with vibrant orchid lavender shades
+        const colorIdx = Math.floor((p / dotsPerRing) * (violetPalette.length - 1));
+        const c = violetPalette[Math.min(colorIdx + 2, violetPalette.length - 1)];
+        colorArray.push(c.r, c.g, c.b);
+      }
+    }
+
+    // 3. 12-FOLD HARMONIC LATITUDE MANDALA BANDS
+    const bands = 22;
+    for (let b = 1; b < bands; b++) {
+      const phi = (b / bands) * Math.PI;
+      const y = Math.cos(phi) * sphereRadius;
+      const baseR = Math.sin(phi) * sphereRadius;
+      
+      const pointsInBand = 12 * Math.round((2 * Math.PI * baseR) / 2.2);
+      for (let p = 0; p < pointsInBand; p++) {
+        const theta = (p / pointsInBand) * Math.PI * 2;
+        
+        // Geometric standing wave modulation
+        const wave = Math.sin(theta * 12) * Math.sin(phi * 6) * 0.12;
+        const currentR = baseR + wave;
+
+        const x = Math.cos(theta) * currentR;
+        const z = Math.sin(theta) * currentR;
+
+        posArray.push(x, y, z);
+
+        // Harmonic color modulation based on symmetry angle
+        const colorRatio = (Math.sin(theta * 6) + 1) / 2;
+        const cIndex = Math.floor(colorRatio * (violetPalette.length - 1));
+        const c = violetPalette[cIndex];
+        colorArray.push(c.r, c.g, c.b);
+      }
+    }
+
+    // Build Geometry
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(posArray, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorArray, 3));
+
+    // Points Material with smooth round texture
     const pointMaterial = new THREE.PointsMaterial({
-      size: 0.3,
+      size: 0.28,
       map: createDotTexture(),
       vertexColors: true,
       transparent: true,
@@ -218,8 +291,8 @@
       requestAnimationFrame(animate);
 
       // Continuous 3D rotation
-      pointCloud.rotation.y += 0.003;
-      pointCloud.rotation.x += 0.0015;
+      pointCloud.rotation.y += 0.0025;
+      pointCloud.rotation.x += 0.0012;
 
       controls.update();
       renderer.render(scene, camera);
