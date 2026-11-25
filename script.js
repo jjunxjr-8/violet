@@ -15,18 +15,17 @@ const DATA = {
     { name: "Senior School Third Floor Map", url: "images/photos/map3.png" },
     { name: "Google Classroom", url: "https://classroom.google.com/h/st" }
   ],
-  "ISAMS": [
-    { name: "School Calendar", url: "#" },
-    { name: "Parent Portal", url: "#" }
-  ],
-  "SOCS": [
-    { name: "Cosmos Cloud Society List", url: "#" }
+  "Student Information": [
+    { name: "School Calendar", url: "https://www.nlcsjeju.co.kr/wp-content/uploads/2026/03/260324_Calender-Parents-Term-Date.pdf" },
+    { name: "ISAMS", url: "nlcsjeju.students.isams.cloud/api/homepage" },
+    { name: "SOCS", url: "https://www.socscms.com/login/29418" }
   ],
   "Guides": [
-    { name: "Help & Technical Support", url: "#" }
+    { name: "Destiny Discover", url: "https://sites.google.com/nlcsjeju.kr/y12ibdp/ibdp-students" }
   ],
   "Tech Support": [
-    { name: "Help & Technical Support", url: "#" }
+    { name: "Change Password", url: "https://passwordchange.nlcsjeju.kr/" },
+    { name: "Printer Configurations", url: "http://172.29.1.42/info/index" }
   ],
   "Parser for CAS": [
     { name: "Download Parser for CAS here", url: "https://cas.nlcscosmos.com" }
