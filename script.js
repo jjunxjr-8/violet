@@ -31,83 +31,83 @@ const DATA = {
   ]
 };
 
-// Purple-toned color palettes with unified light grey card backgrounds (#f4f4f6)
+// Blue-toned color palettes with unified light grey card backgrounds (#f4f4f6)
 const PALETTES = [
-  // 1. Primary Royal Purple
+  // 1. Primary Royal Blue
   {
-    iconBg: '#6f2bdb',      
-    activeBg: '#f0e6fa',
-    activeText: '#501e9e',
+    iconBg: '#1d4ed8',      
+    activeBg: '#dbeafe',
+    activeText: '#1e3a8a',
     cardBg: '#f4f4f6',      
     cardBorder: '#e2e2e7',
-    btnBg: '#f0e6fa',        
-    btnText: '#501e9e',
+    btnBg: '#dbeafe',        
+    btnText: '#1e3a8a',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`
   },
-  // 2. Bright Orchid / Light Purple
+  // 2. Bright Sky Blue
   {
-    iconBg: '#a663cc',      
-    activeBg: '#f4ecf9',
-    activeText: '#7b3aa2',
+    iconBg: '#0284c7',      
+    activeBg: '#e0f2fe',
+    activeText: '#075985',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#f4ecf9',
-    btnText: '#7b3aa2',
+    btnBg: '#e0f2fe',
+    btnText: '#075985',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>`
   },
-  // 3. Deep Violet
+  // 3. Deep Cobalt Blue
   {
-    iconBg: '#5821b3',      
-    activeBg: '#eee4fa',
-    activeText: '#411689',
+    iconBg: '#1e40af',      
+    activeBg: '#e0e7ff',
+    activeText: '#172554',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#eee4fa',
-    btnText: '#411689',
+    btnBg: '#e0e7ff',
+    btnText: '#172554',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>`
   },
-  // 4. Plum & Lavender
+  // 4. Cerulean / Azure Blue
   {
-    iconBg: '#8e44ad',        
-    activeBg: '#f5eafb',
-    activeText: '#6c2c88',
+    iconBg: '#2563eb',        
+    activeBg: '#eff6ff',
+    activeText: '#1d4ed8',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#f5eafb',
-    btnText: '#6c2c88',
+    btnBg: '#eff6ff',
+    btnText: '#1d4ed8',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`
   },
-  // 5. Amethyst Purple
+  // 5. Steel / Slate Blue
   {
-    iconBg: '#7d3c98',        
-    activeBg: '#f3e9f7',
-    activeText: '#5b2c6f',
+    iconBg: '#3b82f6',        
+    activeBg: '#e0f2fe',
+    activeText: '#1e40af',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#f3e9f7',
-    btnText: '#5b2c6f',
+    btnBg: '#e0f2fe',
+    btnText: '#1e40af',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>`
   },
-  // 6. Vibrant Indigo Purple
+  // 6. Vibrant Ocean Blue
   {
-    iconBg: '#6c5ce7',        
-    activeBg: '#edeafc',
-    activeText: '#4b38d3',
+    iconBg: '#0ea5e9',        
+    activeBg: '#e0f2fe',
+    activeText: '#0369a1',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#edeafc',
-    btnText: '#4b38d3',
+    btnBg: '#e0f2fe',
+    btnText: '#0369a1',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>`
   },
-  // 7. Dark Midnight Purple (Parser for CAS)
+  // 7. Dark Midnight Navy (Parser for CAS)
   {
-    iconBg: '#2a1b40',        
-    activeBg: '#f0e6fa',
-    activeText: '#6f2bdb',
+    iconBg: '#0f172a',        
+    activeBg: '#dbeafe',
+    activeText: '#1d4ed8',
     cardBg: '#f4f4f6',
     cardBorder: '#e2e2e7',
-    btnBg: '#f0e6fa',
-    btnText: '#6f2bdb',
+    btnBg: '#dbeafe',
+    btnText: '#1d4ed8',
     iconSvg: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`
   }
 ];
