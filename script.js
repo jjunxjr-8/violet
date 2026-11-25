@@ -7,18 +7,17 @@ const DATA = {
     { name: "COSMOS MediaCube — NLCS Publications", url: "https://mediacube.nlcscosmos.com" },
     { name: "COSMOS OneClick — AI Powered Drive Search", url: "oneclick.html" },
     { name: "COSMOS QuickScope — AI Powered Email Search", url: "https://nlcscosmos.com/quickscope" },
-    { name: "COSMOS Larry — NLCS Library's AI Chatbot", url: "#" }
   ],
   "Maps": [
     { name: "Senior School First Floor Map", url: "images/photos/map1.png" },
     { name: "Senior School Second Floor Map", url: "images/photos/map2.png" },
     { name: "Senior School Third Floor Map", url: "images/photos/map3.png" },
-    { name: "Google Classroom", url: "https://classroom.google.com/h/st" }
   ],
   "Student Information": [
     { name: "School Calendar", url: "https://www.nlcsjeju.co.kr/wp-content/uploads/2026/03/260324_Calender-Parents-Term-Date.pdf" },
     { name: "ISAMS", url: "nlcsjeju.students.isams.cloud/api/homepage" },
-    { name: "SOCS", url: "https://www.socscms.com/login/29418" }
+    { name: "SOCS", url: "https://www.socscms.com/login/29418" },
+    { name: "Google Classroom", url: "https://classroom.google.com/h/st" }
   ],
   "Guides": [
     { name: "Destiny Discover", url: "https://sites.google.com/nlcsjeju.kr/y12ibdp/ibdp-students" }
