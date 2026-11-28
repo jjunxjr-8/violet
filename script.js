@@ -15,7 +15,7 @@ const DATA = {
   ],
   "Student Information": [
     { name: "School Calendar", url: "https://www.nlcsjeju.co.kr/wp-content/uploads/2026/03/260324_Calender-Parents-Term-Date.pdf" },
-    { name: "ISAMS", url: "nlcsjeju.students.isams.cloud/api/homepage" },
+    { name: "ISAMS", url: "https://www.nlcsjeju.students.isams.cloud/api/homepage" },
     { name: "SOCS", url: "https://www.socscms.com/login/29418" },
     { name: "Google Classroom", url: "https://classroom.google.com/h/st" }
   ],
